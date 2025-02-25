@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Symptom Checker System</title>
+    <h1>Symptom Checker System</h1>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        h1 {
+            padding-left: 10rem; /* ขยับไปทางขวา 2 แท็บ (2rem) */
+            margin-top: 5rem; /* เพิ่มระยะห่างจากขอบบน */
+            color: #01579b;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            
+        }
+    
+        .btn {
+            border-radius: 50px;
+            padding: 10px 20px;
+        }
+    
+        .btn:hover {
+            opacity: 0.8;
+        }
+    
+        .modal-header {
+            background-color: #028090;
+            color: rgb(255, 255, 255);
+        }
+    
+        .modal-footer .btn-secondary {
+            background-color: #bdc3c7;
+        }
+            
+        .table {
+            background-color: #f8f9fa; /* พื้นหลังสีอ่อน */
+            border-radius: 8px;
+        }
+
+        .table th {
+            background-color: #000000; /* สีฟ้าสำหรับหัวตาราง */
+            color: white;
+        }
+
+        .table td {
+            background-color: #264653; /* พื้นหลังสีขาวสำหรับข้อมูลในตาราง */
+            color: white;
+        }
+
+        .table-success {
+            background-color: #d4edda; /* สีเขียวอ่อนสำหรับข้อมูลสำเร็จ */
+        }
+
+        .table-danger {
+            background-color: #f8d7da; /* สีแดงอ่อนสำหรับข้อมูลที่ผิดพลาด */
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #f1f1f1; /* สีเมื่อ hover */
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 2px solid #081e27; /* เส้นขอบสีดำ */
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #000;
+            color: white;
+        }
+
+        .message-box {
+            border-radius: 8px; /* ทำให้มุมของกรอบโค้ง */
+            padding: 5px; /* ระยะห่างภายในกรอบ */
+            text-align: center; /* ให้รูปภาพอยู่กลางกรอบ */
+            margin-bottom: 20px; /* เพิ่มระยะห่างด้านล่าง */
+        }
+
+        .message-box img {
+            width: 100%; /* จำกัดขนาดรูปให้พอดีกับกรอบ */
+            height: 250px;
+            border-radius: 6px; /* ทำให้มุมของรูปภาพโค้งตามกรอบ */
+        }
+        .table {
+            width: 70%; /* ปรับขนาดให้เล็กลง */
+            margin: 0 auto; /* จัดให้อยู่กึ่งกลาง */
+        }
+
+        #table_disease_list,
+        #table_disease_symptoms_list {
+            width: 70% !important; /* ปรับให้ขนาดของตารางที่ 2 และ 3 เท่ากับตารางที่ 1 */
+        }
+
+    </style>    
+
+</head>
+<body>
+    <div class="container mt-5">
+        <!-- Symptoms Page -->
+        <div id="symptomsPage">
+            <div class="message-box">
+                <img src="https://www.nci.go.th/th/New_web2024/images/1_002.jpg" alt="Symptom Checker Image">
+            </div>
+            <div class="row">
+                <div class="col-10">
+                    <h2>อาการที่พบ</h2>
+                </div>
+                <div class="col-2 text-end">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#symptomModal" onclick="resetSymptomModal()">เพิ่ม</button>
+                </div>
+            </div>
+            <table class="table mt-3 w-100" id="table_symptom_list">
+                <thead>
+                    <tr>
+                        <th scope="col">รหัสอาการ</th>
+                        <th scope="col">อาการ</th>
+                        <th scope="col">ตัวเลือก</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="text-center mt-4">
+                <button class="btn btn-success" onclick="showDiseasesPage()">ถัดไป</button>
+            </div>
+        </div>
+    </div>    
+
+        <!-- Diseases Page -->
+        <div id="diseasesPage" style="display: none;">
+            <div class="row">
+                <div class="col-10">
+                    <h2 style="padding-left: 18rem; margin-top: 5rem;">โรคที่พบ</h2>
+                </div>
+                <div class="col-2 text-end">
+                    <button type="button" class="btn btn-primary" style="margin-right: 28rem;" data-bs-toggle="modal" data-bs-target="#diseaseModal" onclick="resetDiseaseModal()">เพิ่ม</button>
+                </div>
+            </div>
+            <table class="table mt-3 w-100" id="table_disease_list">
+                <thead>
+                    <tr>
+                        <th scope="col">รหัสโรค</th>
+                        <th scope="col">ชื่อโรค</th>
+                        <th scope="col">รายละเอียด</th>
+                        <th scope="col">ตัวเลือก</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <div class="text-center mt-4">
+                <button class="btn btn-secondary" onclick="showSymptomsPage()">ย้อนกลับ</button>
+                <button class="btn btn-success" onclick="showRelationshipPage()">ถัดไป</button>
+            </div>
+        </div>
+
+    <!-- Symptom Modal -->
+    <div class="modal fade" id="symptomModal" tabindex="-1" aria-labelledby="symptomModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="symptomModalLabel">เพิ่มอาการ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="symptom_id">
+                    <div class="mb-3">
+                        <label for="symptom_name" class="form-label">ชื่ออาการ</label>
+                        <input type="text" class="form-control" id="symptom_name">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-primary" onclick="savesymptom()">บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disease Modal -->
+    <div class="modal fade" id="diseaseModal" tabindex="-1" aria-labelledby="diseaseModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="diseaseModalLabel">เพิ่มโรค</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="disease_id">
+                    <div class="mb-3">
+                        <label for="disease_name" class="form-label">ชื่อโรค</label>
+                        <input type="text" class="form-control" id="disease_name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="disease_description" class="form-label">รายละเอียด</label>
+                        <textarea class="form-control" id="disease_description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                    <button type="button" class="btn btn-primary" onclick="saveDisease()">บันทึก</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Symptoms and Diseases Relationship Page -->
+ <!-- Relationship Page -->
+ <div id="relationshipPage" style="display: none;">
+    <div class="row mb-1">
+        <div class="col-10">
+            <h2 style="padding-left: 18rem; margin-top: 5rem;">ความสัมพันธ์ระหว่างอาการและโรค</h2>
+        </div>
+        <div class="col-2 text-end">
+            <button type="button" class="btn btn-primary" style="margin-right: 32rem;" data-bs-toggle="modal" data-bs-target="#relationshipModal" onclick="resetRelationshipModal()">เพิ่ม</button>
+        </div>
+    </div>
+    <table class="table w-100" id="table_disease_symptoms_list">
+        <thead class="table-dark">
+            <tr>
+                <th>รหัส</th>
+                <th>รหัสโรค</th>
+                <th>รหัสอาการ</th>
+                <th>ตัวเลือก</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="text-center mt-4">
+        <button class="btn btn-secondary" onclick="showDiseasesPage()">ย้อนกลับ</button>
+    </div>
+</div>
+
+<!-- Relationship Modal -->
+<div class="modal fade" id="relationshipModal" tabindex="-1" aria-labelledby="relationshipModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="relationshipModalLabel">เพิ่ม</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="relationship_id"> <!-- Hidden ID สำหรับลบข้อมูล -->
+                <div class="mb-3">
+                    <label for="symptom_select">เลือกรหัสอาการ</label>
+                    <select id="symptom_select" class="form-control">
+                        <option value="">กรุณาเลือกรหัสอาการ</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="disease_select">เลือกรหัสโรค</label>
+                    <select id="disease_select" class="form-control">
+                        <option value="">กรุณาเลือกรหัสโรค</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ปิด</button>
+                <button type="button" class="btn btn-primary" onclick="saveRelationship()">บันทึก</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js" defer></script>
+    <script>
+        function fetchSymptoms() {
+        fetch('http://127.0.0.1:3000/getsymptoms')
+            .then(response => response.json())
+            .then(data => {
+            const tableBody = document.querySelector("#table_symptom_list tbody");
+            tableBody.innerHTML = ""; // ล้างข้อมูลเก่า
+
+            if (data && data.length > 0) {
+                data.forEach(item => {
+                let row = `
+                    <tr>
+                    <td>${item.symptom_id}</td>
+                    <td>${item.name}</td>
+                    <td>
+                        <button class="btn btn-warning" onclick="openEditsymptomModal(${item.symptom_id}, '${item.name}')">แก้ไข</button>
+                        <button class="btn btn-danger" onclick="deleteSymptom(${item.symptom_id})">ลบ</button>
+                    </td>
+                    </tr>`;
+                tableBody.innerHTML += row;
+                });
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="4">ไม่มีข้อมูล</td></tr>';
+            }
+            })
+            .catch(error => {
+            console.error("เกิดข้อผิดพลาด:", error);
+            alert('เกิดข้อผิดพลาดในการโหลดข้อมูลอาการ');
+            });
+        }
+        
+        // โหลดข้อมูลเมื่อหน้าเว็บโหลดเสร็จ
+        document.addEventListener("DOMContentLoaded", fetchSymptoms);
+// symptom
+            function addSymptom() {
+                let name = document.querySelector("#symptom_name").value;
+            fetch('http://127.0.0.1:3000/addsymptoms', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: name })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.error) {
+                    alert("เพิ่มข้อมูลสำเร็จ");
+                    fetchSymptoms(); // เรียกชื่อฟังก์ชันที่ถูกต้อง
+                } else {
+                    alert("เกิดข้อผิดพลาด: " + data.msg);
+                }
+            })
+            .catch(() => {
+                alert("เกิดข้อผิดพลาดในการเพิ่มข้อมูล");
+            });
+        }
+
+        function savesymptom() {
+            const symptomId = document.getElementById("symptom_id").value;
+            const symptomName = document.getElementById("symptom_name").value.trim();
+            if (!symptomName) {
+                alert("กรุณากรอกชื่ออาการ");
+                return;
+            }
+
+            const url = symptomId ? `http://127.0.0.1:3000/editsymptoms/${symptomId}` : "http://127.0.0.1:3000/addsymptoms";
+            const method = symptomId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: symptomName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.error) {
+                    alert("บันทึกข้อมูลสำเร็จ");
+                    fetchSymptoms(); // เรียกชื่อฟังก์ชันที่ถูกต้อง
+                    resetSymptomModal();
+                    document.querySelector(".btn-close").click();
+                } else {
+                    alert("เกิดข้อผิดพลาด: " + data.msg);
+                }
+            })
+            .catch(() => {
+                alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+            });
+        }
+
+        function deleteSymptom(id) {
+            if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบ?")) return;
+
+            fetch(`http://127.0.0.1:3000/deletesymptoms/${id}`, {
+                method: "DELETE"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.error) {
+                    alert("ลบข้อมูลสำเร็จ");
+                    fetchSymptoms(); // เรียกชื่อฟังก์ชันที่ถูกต้อง
+                } else {
+                    alert("เกิดข้อผิดพลาด: " + data.msg);
+                }
+            })
+            .catch(() => {
+                alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+            });
+        }
+        function editSymptom(id) {
+            let newName = prompt("กรุณากรอกชื่ออาการใหม่:");
+
+            if (newName) {
+                fetch(`http://127.0.0.1:3000/editsymptoms/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: newName })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.error) {
+                        alert("แก้ไขข้อมูลสำเร็จ");
+                        fetchsymptoms();
+                    } else {
+                        alert("เกิดข้อผิดพลาด: " + data.msg);
+                    }
+                });
+            }
+        }
+
+        function openEditsymptomModal(id, name) {
+            document.getElementById("symptom_id").value = id;
+            document.getElementById("symptom_name").value = name;
+            document.getElementById("symptomModalLabel").innerText = "แก้ไขอาการ";
+            new bootstrap.Modal(document.getElementById("symptomModal")).show();
+        }
+
+        function resetSymptomModal() {
+            document.getElementById("symptom_id").value = "";
+            document.getElementById("symptom_name").value = "";
+            document.getElementById("symptomModalLabel").innerText = "เพิ่มอาการ";
+        }
+
+// diseases
+        function fetchDiseases() {
+        fetch('http://127.0.0.1:3000/getdisease')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector("#table_disease_list tbody");
+                tableBody.innerHTML = ""; // ล้างข้อมูลเก่า
+
+                if (data && data.length > 0) {
+                    data.forEach(item => {
+                        let row = `
+                            <tr>
+                                <td>${item.disease_id}</td>
+                                <td>${item.name}</td>
+                                <td>${item.description}</td>
+                                <td>
+                                    <button class="btn btn-warning" onclick="openEditDiseaseModal(${item.disease_id}, '${item.name}', '${item.description}')">แก้ไข</button>
+                                    <button class="btn btn-danger" onclick="deleteDisease(${item.disease_id})">ลบ</button>
+                                </td>
+                            </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="4">ไม่มีข้อมูล</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error("เกิดข้อผิดพลาด:", error);
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูลโรค');
+            });
+    }
+
+// โหลดข้อมูลเมื่อหน้าเว็บโหลดเสร็จ
+        document.addEventListener("DOMContentLoaded", fetchDiseases);
+
+        function saveDisease() {
+            const diseaseId = document.getElementById("disease_id").value;
+            const diseaseName = document.getElementById("disease_name").value.trim();
+            const diseaseDescription = document.getElementById("disease_description").value.trim();
+
+            if (!diseaseName) {
+                alert("กรุณากรอกชื่อโรค");
+                return;
+            }
+
+            const url = diseaseId ? `http://127.0.0.1:3000/editdisease/${diseaseId}` : "http://127.0.0.1:3000/adddisease";
+            const method = diseaseId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: diseaseName, description: diseaseDescription })
+            })
+                .then(() => {
+                    alert("บันทึกข้อมูลสำเร็จ");
+                    fetchDiseases();
+                    resetDiseaseModal();
+                    document.querySelector(".btn-close").click();
+                })
+        }
+                
+        function deleteDisease(id) {
+            if (confirm("คุณต้องการลบโรคนี้ใช่หรือไม่?")) {
+                fetch(`http://127.0.0.1:3000/deletedisease/${id}`, { method: 'DELETE' })
+                    .then(() => {
+                        alert("ลบข้อมูลสำเร็จ");
+                        fetchDiseases();
+                    })
+                    .catch(() => {
+                        alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+                    });
+            }
+        }
+
+        function openEditDiseaseModal(id, name, description) {
+            document.getElementById("disease_id").value = id;
+            document.getElementById("disease_name").value = name;
+            document.getElementById("disease_description").value = description;
+            document.getElementById("diseaseModalLabel").innerText = "แก้ไขโรค";
+            new bootstrap.Modal(document.getElementById("diseaseModal")).show();
+        }
+
+        // ฟังก์ชันแสดงหน้าการเลือกอาการ
+        function showSymptomsPage() {
+            document.getElementById("symptomsPage").style.display = "block";  // แสดงหน้าอาการ
+            document.getElementById("diseasesPage").style.display = "none";  // ซ่อนหน้าย่อยของโรค
+            document.getElementById("relationshipPage").style.display = "none"; // ซ่อนหน้าเชื่อมโยง
+        }
+
+        // ฟังก์ชันแสดงหน้าการเลือกโรค
+        function showDiseasesPage() {
+            document.getElementById("symptomsPage").style.display = "none";  // ซ่อนหน้าอาการ
+            document.getElementById("diseasesPage").style.display = "block";  // แสดงหน้าการเลือกโรค
+            document.getElementById("relationshipPage").style.display = "none"; // ซ่อนหน้าเชื่อมโยง
+            fetchDiseases();  // ฟังก์ชันดึงข้อมูลโรค (สมมุติว่ามี)
+        }
+
+        // ฟังก์ชันแสดงหน้าการเชื่อมโยงโรคและอาการ
+        function showRelationshipPage() {
+            console.log("Navigating to Relationship Page");
+            document.getElementById("symptomsPage").style.display = "none";  // ซ่อนหน้าอาการ
+            document.getElementById("diseasesPage").style.display = "none";  // ซ่อนหน้าการเลือกโรค
+            document.getElementById("relationshipPage").style.display = "block"; // แสดงหน้าเชื่อมโยง
+        }
+
+//symptom_diseas
+    function fetchDiseaseSymptoms() {
+        fetch('http://127.0.0.1:3000/getdisease_symptoms')
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Data received:", data); // ตรวจสอบข้อมูล
+                const tableBody = document.querySelector("#table_disease_symptoms_list tbody");
+                tableBody.innerHTML = ""; // เคลียร์ข้อมูลเก่า
+
+                if (Array.isArray(data) && data.length > 0) {
+                    data.forEach(item => {
+                        let row = `
+                            <tr>
+                                <td>${item.id}</td>
+                                <td>${item.disease_id}</td>
+                                <td>${item.symptom_id}</td>
+                                <td>
+                                    <button class="btn btn-warning" onclick="openEditModal(${item.id}, ${item.disease_id}, ${item.symptom_id})">แก้ไข</button>
+                                    <button class="btn btn-danger" onclick="deleteDiseaseSymptoms(${item.id})">ลบ</button>
+                                </td>
+                            </tr>`;
+                        tableBody.innerHTML += row;
+                    });
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="4">ไม่มีข้อมูล</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error("❌ Error fetching disease symptoms:", error);
+            });
+    }
+
+    // เรียก API เมื่อโหลดหน้าเว็บ
+    document.addEventListener("DOMContentLoaded", fetchDiseaseSymptoms);
+
+    // ฟังก์ชันสำหรับเชื่อมโยงโรคกับอาการ
+    function addDiseaseSymptoms() {
+        const diseaseId = document.getElementById("disease_select").value;
+        const symptomId = document.getElementById("symptom_select").value;
+
+        if (!diseaseId || !symptomId) {
+            alert("กรุณาเลือกโรคและอาการ");
+            return;
+        }
+
+        // ส่งข้อมูลการเชื่อมโยงไปยัง API
+        fetch("http://127.0.0.1:3000/adddisease_symptoms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ disease_id: diseaseId, symptom_id: symptomId }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert("❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + data.error);
+            } else {
+                alert("✅ บันทึกข้อมูลสำเร็จ!");
+
+                // ✅ ตรวจสอบก่อนเคลียร์ค่า input
+                let diseaseInput = document.getElementById("diseaseInput");
+                let symptomInput = document.getElementById("symptomInput");
+
+                if (diseaseInput) diseaseInput.value = "";
+                if (symptomInput) symptomInput.value = "";
+
+                fetchSymptoms(); // โหลดข้อมูลใหม่
+            }
+        })
+        .catch(error => {
+            console.error("❌ Error:", error);
+            alert("❌ ไม่สามารถบันทึกข้อมูลได้");
+        });
+    }
+
+    function saveRelationship() {
+        const diseaseId = document.getElementById("disease_select").value;
+        const symptomId = document.getElementById("symptom_select").value;
+        const relationshipId = document.getElementById("relationship_id")?.value;
+
+        if (!diseaseId || !symptomId) {
+            alert("กรุณาเลือกอาการและโรค");
+            return;  
+        }
+
+        const url = relationshipId 
+            ? `http://127.0.0.1:3000/editdisease_symptoms/${relationshipId}` 
+            : "http://127.0.0.1:3000/adddisease_symptoms";
+        const method = relationshipId ? 'PUT' : 'POST';
+
+        fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ disease_id: diseaseId, symptom_id: symptomId }) 
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                throw new Error(data.error); 
+            }
+            alert(data.message || "บันทึกข้อมูลสำเร็จ");
+            fetchDiseaseSymptoms();  // รีเฟรชข้อมูลที่แสดงในตาราง
+
+            // ปิด modal หลังจากบันทึกสำเร็จ
+            const myModal = new bootstrap.Modal(document.getElementById('relationshipModal'));
+            myModal.hide(); // ปิด modal
+
+            // รีเซ็ต modal หลังจากปิด
+            resetdiseaseSymptomsModal();
+
+            // รีเฟรชหน้าเว็บ (จะทำให้ข้อมูลอัปเดต)
+            location.reload();  // หรือสามารถใช้ window.location.reload();
+        })
+        .catch(error => {
+            alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล: ' + error.message);
+        });
+    }
+
+    // ฟังก์ชันสำหรับการลบความสัมพันธ์โรคกับอาการ
+    function deleteDiseaseSymptoms(id) {
+        console.log("กำลังลบ ID:", id); // ตรวจสอบว่า ID ที่ส่งมาเป็นค่าที่ถูกต้อง
+
+        if (confirm("คุณต้องการลบความสัมพันธ์นี้ใช่หรือไม่?")) {
+            fetch(`http://127.0.0.1:3000/deletedisease_symptoms/${id}`, { method: 'DELETE' })
+                .then(response => response.json()) // เปลี่ยนเป็น .json() เพื่อรับค่าผลลัพธ์เป็น JSON
+                .then(data => {
+                    console.log("ผลลัพธ์จาก server:", data); // ตรวจสอบค่าผลลัพธ์ที่ได้จาก server
+                    if (data.error) {
+                        alert(data.msg); // แสดงข้อความผิดพลาดจาก Backend
+                    } else {
+                        alert("ลบข้อมูลสำเร็จ");
+                        fetchDiseaseSymptoms(); // รีเฟรชข้อมูลที่แสดงในตาราง
+                    }
+                })
+                .catch(error => {
+                    console.error('เกิดข้อผิดพลาด:', error);
+                    alert('เกิดข้อผิดพลาดในการติดต่อเซิร์ฟเวอร์');
+                });
+        }
+    }
+
+    function deleteRelationship() {
+        const relationshipId = document.getElementById('relationship_id').value; // ดึง ID ของความสัมพันธ์
+        if (!relationshipId) {
+            alert('กรุณาเลือกความสัมพันธ์ที่ต้องการลบ');
+            return;
+        }
+
+        if (confirm("คุณต้องการลบความสัมพันธ์นี้ใช่หรือไม่?")) {
+            fetch(`http://127.0.0.1:3000/deletedisease_symptoms/${relationshipId}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('เกิดข้อผิดพลาดในการลบความสัมพันธ์');
+                } else {
+                    alert('ลบความสัมพันธ์สำเร็จ');
+                    // รีเฟรชข้อมูลความสัมพันธ์
+                    fetchDiseaseSymptoms(); // ฟังก์ชันสำหรับดึงข้อมูลทั้งหมดที่แสดงบนหน้าเว็บ
+                    // ปิด modal
+                    var myModal = new bootstrap.Modal(document.getElementById('relationshipModal'));
+                    myModal.hide();
+                }
+            })
+            .catch(error => {
+                console.error('เกิดข้อผิดพลาด:', error);
+                alert('เกิดข้อผิดพลาดในการติดต่อเซิร์ฟเวอร์');
+            });
+        }
+    }
+
+    function openEditModal(relationshipId, diseaseId, symptomId) {
+        document.getElementById("relationship_id").value = relationshipId;
+        document.getElementById("disease_select").value = diseaseId;
+        document.getElementById("symptom_select").value = symptomId;
+        document.getElementById("relationshipModalLabel").innerText = "แก้ไขความสัมพันธ์";
+        new bootstrap.Modal(document.getElementById("relationshipModal")).show();
+    }
+    function resetdiseaseSymptomsModal() {
+        // คงค่า modal ไม่ให้รีเซ็ตหลังจากบันทึก
+        document.getElementById("relationshipModalLabel").innerText = "เพิ่มความสัมพันธ์"; // เปลี่ยนชื่อ modal เมื่อเปิดใหม่
+    }
+
+    function fetchSymptomOptions() {
+    fetch('http://127.0.0.1:3000/getsymptoms')
+        .then(response => response.json())
+        .then(data => {
+            const symptomSelect = document.getElementById("symptom_select");
+            symptomSelect.innerHTML = ""; // ล้างข้อมูลเก่า
+
+            // ตรวจสอบว่ามีข้อมูลหรือไม่
+            if (data && data.length > 0) {
+                // เพิ่ม option สำหรับแต่ละอาการที่ได้จาก API
+                data.forEach(item => {
+                    let option = `<option value="${item.symptom_id}">${item.symptom_id}</option>`; // แสดงรหัสอาการแทนชื่ออาการ
+                    symptomSelect.innerHTML += option;
+                });
+            } else {
+                symptomSelect.innerHTML = '<option value="">ไม่มีข้อมูล</option>';
+            }
+        })
+    }
+
+    function fetchDiseaseOptions() {
+    fetch('http://127.0.0.1:3000/getdisease')
+        .then(response => response.json())
+        .then(data => {
+            console.log("ข้อมูลโรคที่ได้รับ:", data); // เพิ่มการตรวจสอบข้อมูลที่ได้รับ
+            const diseaseSelect = document.getElementById("disease_select");
+            diseaseSelect.innerHTML = ""; // ล้างข้อมูลเก่า
+
+            if (data && data.length > 0) {
+                data.forEach(item => {
+                    let option = `<option value="${item.disease_id}">${item.disease_id}</option>`; // แสดงรหัสโรคแทนชื่อ
+                    diseaseSelect.innerHTML += option;
+                });
+            } else {
+                diseaseSelect.innerHTML = '<option value="">ไม่มีข้อมูล</option>';
+            }
+        })
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+    // เรียกใช้ฟังก์ชันเมื่อโหลดหน้าเว็บ
+    fetchDiseaseOptions();
+    fetchSymptomOptions();
+    });
+
+
+        // Initial fetch
+        fetchsymptoms();
+    </script>
+</body>
+
+</html>
