@@ -280,7 +280,7 @@
     <script src="script.js" defer></script>
     <script>
         function fetchSymptoms() {
-        fetch('http://127.0.0.1:3000/getsymptoms')
+        fetch('https://backend-mini-pied.vercel.app/getsymptoms')
             .then(response => response.json())
             .then(data => {
             const tableBody = document.querySelector("#table_symptom_list tbody");
@@ -314,7 +314,7 @@
 // symptom
             function addSymptom() {
                 let name = document.querySelector("#symptom_name").value;
-            fetch('http://127.0.0.1:3000/addsymptoms', {
+            fetch('https://backend-mini-pied.vercel.app/addsymptoms', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: name })
@@ -341,7 +341,7 @@
                 return;
             }
 
-            const url = symptomId ? `http://127.0.0.1:3000/editsymptoms/${symptomId}` : "http://127.0.0.1:3000/addsymptoms";
+            const url = symptomId ? `https://backend-mini-pied.vercel.app/editsymptoms/${symptomId}` : "https://backend-mini-pied.vercel.app/addsymptoms";
             const method = symptomId ? 'PUT' : 'POST';
 
             fetch(url, {
@@ -368,7 +368,7 @@
         function deleteSymptom(id) {
             if (!confirm("คุณแน่ใจหรือไม่ว่าต้องการลบ?")) return;
 
-            fetch(`http://127.0.0.1:3000/deletesymptoms/${id}`, {
+            fetch(`https://backend-mini-pied.vercel.app/deletesymptoms/${id}`, {
                 method: "DELETE"
             })
             .then(response => response.json())
@@ -388,7 +388,7 @@
             let newName = prompt("กรุณากรอกชื่ออาการใหม่:");
 
             if (newName) {
-                fetch(`http://127.0.0.1:3000/editsymptoms/${id}`, {
+                fetch(`https://backend-mini-pied.vercel.app/editsymptoms/${id}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ name: newName })
@@ -420,7 +420,7 @@
 
 // diseases
         function fetchDiseases() {
-        fetch('http://127.0.0.1:3000/getdisease')
+        fetch('https://backend-mini-pied.vercel.app/getdisease')
             .then(response => response.json())
             .then(data => {
                 const tableBody = document.querySelector("#table_disease_list tbody");
@@ -463,7 +463,7 @@
                 return;
             }
 
-            const url = diseaseId ? `http://127.0.0.1:3000/editdisease/${diseaseId}` : "http://127.0.0.1:3000/adddisease";
+            const url = diseaseId ? `https://backend-mini-pied.vercel.app/editdisease/${diseaseId}` : "https://backend-mini-pied.vercel.app/adddisease";
             const method = diseaseId ? 'PUT' : 'POST';
 
             fetch(url, {
@@ -481,7 +481,7 @@
                 
         function deleteDisease(id) {
             if (confirm("คุณต้องการลบโรคนี้ใช่หรือไม่?")) {
-                fetch(`http://127.0.0.1:3000/deletedisease/${id}`, { method: 'DELETE' })
+                fetch(`https://backend-mini-pied.vercel.app/deletedisease/${id}`, { method: 'DELETE' })
                     .then(() => {
                         alert("ลบข้อมูลสำเร็จ");
                         fetchDiseases();
@@ -525,7 +525,7 @@
 
 //symptom_diseas
     function fetchDiseaseSymptoms() {
-        fetch('http://127.0.0.1:3000/getdisease_symptoms')
+        fetch('https://backend-mini-pied.vercel.app/getdisease_symptoms')
             .then(response => response.json())
             .then(data => {
                 console.log("✅ Data received:", data); // ตรวจสอบข้อมูล
@@ -569,7 +569,7 @@
         }
 
         // ส่งข้อมูลการเชื่อมโยงไปยัง API
-        fetch("http://127.0.0.1:3000/adddisease_symptoms", {
+        fetch("https://backend-mini-pied.vercel.app/adddisease_symptoms", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ disease_id: diseaseId, symptom_id: symptomId }),
@@ -608,8 +608,8 @@
         }
 
         const url = relationshipId 
-            ? `http://127.0.0.1:3000/editdisease_symptoms/${relationshipId}` 
-            : "http://127.0.0.1:3000/adddisease_symptoms";
+            ? `https://backend-mini-pied.vercel.app/editdisease_symptoms/${relationshipId}` 
+            : "https://backend-mini-pied.vercel.app/adddisease_symptoms";
         const method = relationshipId ? 'PUT' : 'POST';
 
         fetch(url, {
@@ -645,7 +645,7 @@
         console.log("กำลังลบ ID:", id); // ตรวจสอบว่า ID ที่ส่งมาเป็นค่าที่ถูกต้อง
 
         if (confirm("คุณต้องการลบความสัมพันธ์นี้ใช่หรือไม่?")) {
-            fetch(`http://127.0.0.1:3000/deletedisease_symptoms/${id}`, { method: 'DELETE' })
+            fetch(`https://backend-mini-pied.vercel.app/deletedisease_symptoms/${id}`, { method: 'DELETE' })
                 .then(response => response.json()) // เปลี่ยนเป็น .json() เพื่อรับค่าผลลัพธ์เป็น JSON
                 .then(data => {
                     console.log("ผลลัพธ์จาก server:", data); // ตรวจสอบค่าผลลัพธ์ที่ได้จาก server
@@ -671,7 +671,7 @@
         }
 
         if (confirm("คุณต้องการลบความสัมพันธ์นี้ใช่หรือไม่?")) {
-            fetch(`http://127.0.0.1:3000/deletedisease_symptoms/${relationshipId}`, {
+            fetch(`https://backend-mini-pied.vercel.app/deletedisease_symptoms/${relationshipId}`, {
                 method: 'DELETE'
             })
             .then(response => response.json())
@@ -707,7 +707,7 @@
     }
 
     function fetchSymptomOptions() {
-    fetch('http://127.0.0.1:3000/getsymptoms')
+    fetch('https://backend-mini-pied.vercel.app/getsymptoms')
         .then(response => response.json())
         .then(data => {
             const symptomSelect = document.getElementById("symptom_select");
@@ -727,7 +727,7 @@
     }
 
     function fetchDiseaseOptions() {
-    fetch('http://127.0.0.1:3000/getdisease')
+    fetch('https://backend-mini-pied.vercel.app/getdisease')
         .then(response => response.json())
         .then(data => {
             console.log("ข้อมูลโรคที่ได้รับ:", data); // เพิ่มการตรวจสอบข้อมูลที่ได้รับ
